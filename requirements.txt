@@ -1,0 +1,9 @@
+requests>=2.28.0
+gitpython>=3.1.30
+QDarkStyle==3.1
+groq
+dotenv
+textual 
+requests 
+gitpython
+PyQt5
