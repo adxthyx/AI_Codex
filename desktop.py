@@ -401,6 +401,17 @@ class CodeAssistantUI(QMainWindow):
                 QMessageBox.warning(self, "Error", f"Failed to save file: {str(e)}")
     
     # Repository functions
+    # def get_repo_info(self):
+    #     """Get and display repository information"""
+    #     if not self.github_assistant:
+    #         QMessageBox.warning(self, "Not Initialized", "GitHub assistant not initialized")
+    #         return
+        
+    #     try:
+    #         info = self.github_assistant.get_repo_info()
+    #         self.repo_info.setText(str(info))
+    #     except Exception as e:
+    #         QMessageBox.warning(self, "Error", f"Failed to get repository info: {str(e)}")
     def get_repo_info(self):
         """Get and display repository information"""
         if not self.github_assistant:
@@ -409,7 +420,50 @@ class CodeAssistantUI(QMainWindow):
         
         try:
             info = self.github_assistant.get_repo_info()
-            self.repo_info.setText(str(info))
+            
+            # Format the info in a more readable way
+            formatted_text = "Repository Information:\n\n"
+            
+            # Active branch
+            formatted_text += f"Active Branch: {info.get('active_branch', 'N/A')}\n\n"
+            
+            # Remotes
+            formatted_text += "Repo Link:"
+            remotes = info.get('remotes', {})
+            for remote_name, urls in remotes.items():
+                formatted_text += f"{', '.join(urls)}\n"
+            
+            # Repository status
+            formatted_text += f"\nRepository Status:\n"
+            formatted_text += f"  • Dirty: {'Yes' if info.get('is_dirty', False) else 'No'}\n"
+            
+            # Untracked files
+            untracked = info.get('untracked_files', [])
+            if untracked:
+                formatted_text += f"  • Untracked Files: {len(untracked)}\n"
+                for file in untracked[:5]:  # Show only first 5 files if many
+                    formatted_text += f"    - {file}\n"
+                if len(untracked) > 5:
+                    formatted_text += f"    - ... and {len(untracked) - 5} more\n"
+            else:
+                formatted_text += "  • Untracked Files: None\n"
+            
+            # Last commit
+            last_commit = info.get('last_commit', {})
+            if last_commit:
+                formatted_text += f"\nLast Commit:\n"
+                formatted_text += f"  • Hash: {last_commit.get('hexsha', 'N/A')[:8]}...\n"
+                formatted_text += f"  • Author: {last_commit.get('author', 'N/A')}\n"
+                formatted_text += f"  • Date: {last_commit.get('committed_date', 'N/A').split('T')[0]}\n"
+                
+                # Format commit message - handle multiline messages
+                message = last_commit.get('message', 'N/A').strip()
+                first_line = message.split('\n')[0]
+                formatted_text += f"  • Message: {first_line}\n"
+            
+            self.repo_info.setText(formatted_text)
+            self.statusBar().showMessage("Repository information retrieved")
+        
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Failed to get repository info: {str(e)}")
     
