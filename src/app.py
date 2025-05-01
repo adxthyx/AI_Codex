@@ -53,7 +53,7 @@ class GroqAssistant:
     def detect_errors(self, code: str) -> str:
         """Detect potential errors in the code."""
         messages = [
-            {"role": "system", "content": "You are a code review assistant. Analyze the code for potential errors, bugs, and issues."},
+            {"role": "system", "content": """"You are CodexRev, an expert code review assistant. Analyze code for bugs, logic flaws, bad practices, and security risks. Suggest concise, actionable improvements with optional corrected snippets. Prioritize clarity, performance, and maintainability. Support multiple languages. Assume user has intermediate-to-advanced knowledge."""},
             {"role": "user", "content": f"Please analyze this code for errors and suggest improvements:\n\n```\n{code}\n```"}
         ]
         return self._call_groq_api(messages)
@@ -61,7 +61,7 @@ class GroqAssistant:
     def debug_error(self, code: str, error_message: str) -> str:
         """Debug an error given code and error message."""
         messages = [
-            {"role": "system", "content": "You are a debugging assistant. Help fix errors in code."},
+            {"role": "system", "content": """You are DebugMate, an expert debugging assistant. Analyze code and error messages to identify root causes and suggest precise fixes. Explain issues clearly and offer corrected code or workarounds where needed. Prioritize accuracy and clarity."""},
             {"role": "user", "content": f"I have the following code:\n\n```\n{code}\n```\n\nAnd I'm getting this error:\n\n{error_message}\n\nPlease help me understand and fix this issue."}
         ]
         return self._call_groq_api(messages)
@@ -69,7 +69,7 @@ class GroqAssistant:
     def generate_documentation(self, code: str, doc_type: str = "function") -> str:
         """Generate documentation for code."""
         messages = [
-            {"role": "system", "content": "You are a documentation assistant. Generate comprehensive documentation for code."},
+            {"role": "system", "content": """You are DocuForge, an expert in generating clear, structured, and accurate code documentation. Support various doc types (e.g., function-level, module-level, API). Use appropriate formatting and terminology for the language."""},
             {"role": "user", "content": f"Please generate {doc_type} documentation for this code:\n\n```\n{code}\n```"}
         ]
         return self._call_groq_api(messages)
@@ -77,7 +77,7 @@ class GroqAssistant:
     def explain_code(self, code: str) -> str:
         """Explain what the code does."""
         messages = [
-            {"role": "system", "content": "You are a code explanation assistant. Provide clear explanations of code."},
+            {"role": "system", "content": """You are ExplainAI, a code explanation expert. Break down code step by step, clarify logic, and describe functionality in clear, technical terms. Support multiple languages and highlight important behaviors or edge cases."""},
             {"role": "user", "content": f"Please explain what this code does in detail:\n\n```\n{code}\n```"}
         ]
         return self._call_groq_api(messages)
@@ -85,7 +85,7 @@ class GroqAssistant:
     def suggest_improvements(self, code: str) -> str:
         """Suggest code improvements."""
         messages = [
-            {"role": "system", "content": "You are a code improvement assistant. Suggest ways to make code better, more efficient, and follow best practices."},
+            {"role": "system", "content": """You are OptiCode, an expert in code optimization and best practices. Suggest improvements for clarity, efficiency, readability, and maintainability. Support multiple languages and modern conventions."""},
             {"role": "user", "content": f"Please suggest improvements for this code:\n\n```\n{code}\n```"}
         ]
         return self._call_groq_api(messages)
@@ -259,7 +259,7 @@ class ErrorAnalyzer:
     def analyze_traceback(self, traceback_text: str) -> str:
         """Analyze a Python traceback."""
         messages = [
-            {"role": "system", "content": "You are an error analysis assistant. Help understand and fix Python tracebacks."},
+            {"role": "system", "content": """You are TraceFix, a Python error analysis expert. Interpret tracebacks, explain root causes clearly, and suggest accurate fixes. Focus on clarity, correctness, and actionable solutions."""},
             {"role": "user", "content": f"Please analyze this Python traceback and explain what's wrong and how to fix it:\n\n```\n{traceback_text}\n```"}
         ]
         return self.groq_assistant._call_groq_api(messages)
@@ -322,14 +322,12 @@ class DocumentationGenerator:
         """Generate documentation for a module."""
         return self.groq_assistant.generate_documentation(module_code, doc_type="module")
     
-    def generate_project_readme(self, project_description: str, key_features: List[str]) -> str:
+    def generate_project_readme(self, code: str) -> str:
         """Generate a README for a project."""
-        content = f"Project Description: {project_description}\n\nKey Features:\n"
-        for i, feature in enumerate(key_features, 1):
-            content += f"{i}. {feature}\n"
+        content = code 
         
         messages = [
-            {"role": "system", "content": "You are a documentation assistant. Generate comprehensive project README files in markdown format."},
+            {"role": "system", "content": """You are DocuForge, a markdown documentation assistant. Generate complete, well-structured README.md files. Include sections like Title, Description, Features, Installation, Usage, Tech Stack, Contributing, License, and Contact (if available). Use proper markdown syntax and keep the tone clear, concise, and developer-friendly. I will just be providing you with the code and nothing else."""},
             {"role": "user", "content": f"Please generate a complete README.md file for my project with the following information:\n\n{content}"}
         ]
         return self.groq_assistant._call_groq_api(messages)
@@ -337,7 +335,7 @@ class DocumentationGenerator:
     def generate_code_comments(self, code: str) -> str:
         """Generate comments for code."""
         messages = [
-            {"role": "system", "content": "You are a code documentation assistant. Add helpful comments to code."},
+            {"role": "system", "content": """You are CommentMate, an expert in adding clear, concise comments to code. Improve readability without modifying functionality. Support idiomatic commenting for various languages."""},
             {"role": "user", "content": f"Please add appropriate comments to this code without changing the code itself:\n\n```\n{code}\n```"}
         ]
         return self.groq_assistant._call_groq_api(messages)

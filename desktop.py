@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QFileSystemModel
 import qdarkstyle
 
 # Import from your app.py
-from app import (GroqAssistant, GitHubAssistant, CodebaseAnalyzer, 
+from src.app import (GroqAssistant, GitHubAssistant, CodebaseAnalyzer, 
                 ErrorAnalyzer, DocumentationGenerator)
 
 class CodeAssistantUI(QMainWindow):
@@ -631,18 +631,32 @@ class CodeAssistantUI(QMainWindow):
             features_text = self.project_features.toPlainText()
             features = [f.strip() for f in features_text.split('\n') if f.strip()]
             
-            if not description or not features:
-                QMessageBox.warning(self, "Missing Information", "Please provide a project description and at least one feature")
-                return
-            
-            self.statusBar().showMessage("Generating README...")
+            # if not description or not features:
+            #     QMessageBox.warning(self, "Missing Information", "Please provide a project description and at least one feature")
+            #     return
             try:
-                result = self.doc_generator.generate_project_readme(description, features)
-                self.doc_results.setText(result)
-                self.statusBar().showMessage("README generated")
+                file_path = self.doc_file_path.text()
+                if not file_path or not os.path.isfile(file_path):
+                    QMessageBox.warning(self, "Invalid File", "Please select a valid file")
+                    return
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+
+                content = "This is the code \\n\\n" +content + "\\n\\n This is the description. You can also add your own description or enhance the description based on code. \\n\\n " + description + "\\n\\n This is the feature list. You can also add your own feature list or enhance the feature list based on code. \\n\\n" +features_text
+
+                self.statusBar().showMessage("Generating README...")
+                try:
+                    result = self.doc_generator.generate_project_readme(content)
+                    self.doc_results.setText(result)
+                    self.statusBar().showMessage("README generated")
+                except Exception as e:
+                    QMessageBox.critical(self, "Error", f"Failed to generate README: {str(e)}")
+                    self.statusBar().showMessage("Error generating README")
+
             except Exception as e:
-                QMessageBox.critical(self, "Error", f"Failed to generate README: {str(e)}")
-                self.statusBar().showMessage("Error generating README")
+                QMessageBox.critical(self, "Error", f"Failed to generate documentation: {str(e)}")
+                self.statusBar().showMessage("Error generating documentation")
+
         else:
             file_path = self.doc_file_path.text()
             if not file_path or not os.path.isfile(file_path):
@@ -661,7 +675,7 @@ class CodeAssistantUI(QMainWindow):
                 elif doc_type == "module":
                     result = self.doc_generator.generate_module_docs(content)
                 else:
-                    result = self.groq_assistant.generate_documentation(content, doc_type=doc_type)
+                    result = self.groq_assistant.generate_documentation(content)
                 
                 self.doc_results.setText(result)
                 self.statusBar().showMessage("Documentation generated")
