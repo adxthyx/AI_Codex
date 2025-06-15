@@ -1,4 +1,4 @@
-# Code Assistant with Groq API
+# Code Assistant with Llama 70B-Instruct
 
 A powerful CLI tool to help with error detection, debugging, and documentation of both GitHub projects and local codebases. This assistant leverages the Groq API to provide intelligent code analysis and suggestions.
 
