@@ -13,7 +13,6 @@ import requests
 from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError
 from dotenv import load_dotenv
-
 from dotenv import load_dotenv
 load_dotenv()
 
